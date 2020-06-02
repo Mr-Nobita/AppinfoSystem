@@ -4,6 +4,7 @@ import com.jbit.pojo.DevUser;
 import com.jbit.service.DevUserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -28,7 +29,7 @@ public class DevUserController {
     public String login(Model model, HttpSession session, String devcode, String devpassword){
         DevUser devUser = devUserService.queryLogin(devcode, devpassword);
         if (devUser!=null){
-            System.out.println(devUser);
+            /*System.out.println(devUser);*/
             session.setAttribute("devuser",devUser);
             return "/developer/main";//重定向
         }
@@ -40,9 +41,9 @@ public class DevUserController {
      * @param session
      * @return
      */
-    @PostMapping("login")
+    @GetMapping("logout")
     public String logout(HttpSession session){
         session.invalidate();
-            return "redierct:/jsp/devlogin.jsp";//重定向
+            return "devlogin";//重定向
     }
 }
