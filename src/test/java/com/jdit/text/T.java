@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 @RunWith(SpringRunner.class)
 @ContextConfiguration("classpath:applicationContext.xml")
 public class T {
+/*
     @Resource
     private DevUserService devUserService;
     @Test
@@ -19,5 +20,6 @@ public class T {
         DevUser devUser = devUserService.queryLogin("test001", "123456");
         System.out.println("devUser = " + devUser);
     }
+*/
 
 }
