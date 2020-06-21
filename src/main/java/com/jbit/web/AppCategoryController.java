@@ -13,7 +13,6 @@ import javax.annotation.Resources;
 import java.util.List;
 
 @Controller
-@RequestMapping("dev")
 public class AppCategoryController {
     @Resource
     private AppcategoryService appcategoryService;

@@ -3,7 +3,7 @@ $("#queryCategoryLevel1").change(function(){
 	if(queryCategoryLevel1 != '' && queryCategoryLevel1 != null){
 		$.ajax({
 			type:"GET",//请求类型
-			url:"/dev/categorylevellist",//请求的url
+			url:"/categorylevellist",//请求的url
 			data:{id:queryCategoryLevel1},//请求参数
 			success:function(data){//data：返回数据（json对象）
 				$("#queryCategoryLevel2").html("");
@@ -32,7 +32,7 @@ $("#queryCategoryLevel2").change(function(){
 	if(queryCategoryLevel2 != '' && queryCategoryLevel2 != null){
 		$.ajax({
 			type:"GET",//请求类型
-			url:"/dev/categorylevellist",//请求的url
+			url:"/categorylevellist",//请求的url
 			data:{id:queryCategoryLevel2},//请求参数
 			success:function(data){//data：返回数据（json对象）
 				$("#queryCategoryLevel3").html("");

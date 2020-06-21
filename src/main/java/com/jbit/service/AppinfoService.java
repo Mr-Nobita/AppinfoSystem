@@ -7,7 +7,9 @@ import com.jbit.mapper.AppInfoMapper;
 import com.jbit.pojo.AppInfo;
 import com.jbit.pojo.AppVersion;
 
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.Appinfo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
@@ -23,6 +25,17 @@ public class AppinfoService {
     private AppcategoryService appcategoryService;
     @Resource
     private AppVersionService appVersionService;
+
+    /**
+     * 验证ApkName是否存在
+     * @param apkname
+     * @return
+     */
+    public AppInfo queryApkexist(String apkname){
+        AppInfo appinfo=new AppInfo();
+        appinfo.setApkname(apkname);
+        return appInfoMapper.selectOne(appinfo);
+    }
     /**
      * App列表查询每一个Dev登录后只查看属于自己的AppInfo
      * @return
@@ -79,5 +92,9 @@ public class AppinfoService {
             }
         });
 
+    }
+    @Transactional
+    public void save(AppInfo appInfo) {
+        appInfoMapper.insertSelective(appInfo);
     }
 }
