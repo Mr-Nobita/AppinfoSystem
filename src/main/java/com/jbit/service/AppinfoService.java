@@ -1,9 +1,14 @@
 package com.jbit.service;
 
+import com.alibaba.druid.util.StringUtils;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.jbit.mapper.AppInfoMapper;
 import com.jbit.pojo.AppInfo;
 import com.jbit.pojo.AppVersion;
+
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -22,13 +27,34 @@ public class AppinfoService {
      * App列表查询每一个Dev登录后只查看属于自己的AppInfo
      * @return
      */
-    public List<AppInfo>queryAppInfo(Long devid){
-        AppInfo appInfo = new AppInfo();
-        appInfo.setDevid(devid);
-        List<AppInfo> appInfos=appInfoMapper.select(appInfo);
+    public PageInfo queryAppInfo(Integer pagenum, Long devId, String querySoftwareName, Long queryStatus, Long queryFlatformId, Long queryCategoryLevel1, Long queryCategoryLevel2, Long queryCategoryLevel3){
+        PageHelper.startPage(pagenum,5);
+        Example example =new Example(AppInfo.class);
+        Example.Criteria criteria=example.createCriteria();
+        if (!StringUtils.isEmpty(querySoftwareName)){
+            criteria.andLike("softwarename","%"+querySoftwareName+"%");
+        }
+        if (queryStatus!=null&&queryStatus!=0){
+            criteria.andEqualTo("status",queryStatus);
+        }
+        if (queryFlatformId!=null&&queryFlatformId!=0){
+            criteria.andEqualTo("flatformid",queryFlatformId);
+        }
+        if (queryCategoryLevel1!=null&&queryCategoryLevel1!=0){
+            criteria.andEqualTo("categorylevel1",queryCategoryLevel1);
+        }
+        if (queryCategoryLevel2!=null&&queryCategoryLevel2!=0){
+            criteria.andEqualTo("categorylevel2",queryCategoryLevel2);
+        }
+        if (queryCategoryLevel3!=null&&queryCategoryLevel3!=0){
+            criteria.andEqualTo("categorylevel3",queryCategoryLevel3);
+        }
+        criteria.andEqualTo("devid",devId);
+        List<AppInfo> appInfos=appInfoMapper.selectByExample(example);
         //绑定其他数据
         dindData(appInfos);
-        return appInfos;
+        //处理分页
+        return new PageInfo<>(appInfos);
     }
 
     /**

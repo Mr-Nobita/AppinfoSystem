@@ -13,10 +13,37 @@
         <!--扫描controller-->
     <context:component-scan base-package="com.jbit.web"></context:component-scan>
     <!--开启mvc注解-->
-    <mvc:annotation-driven></mvc:annotation-driven>
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <!--String 响应式乱码处理-->
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>text/htmll;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+            <!--Joon响应式乱码处理-->
+            <bean class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>json/application;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
     <!--静态资源-->
     <mvc:resources mapping="/statics/**" location="/statics/"></mvc:resources>
     <!--拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <mvc:exclude-mapping path="/dev/login"/>
+            <mvc:exclude-mapping path="/statics/**"/>
+            <bean class="com.jbit.utils.SysInterceptior"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
     <!--转换器-->
     <!--视图解析器-->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
