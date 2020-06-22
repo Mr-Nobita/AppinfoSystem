@@ -28,6 +28,41 @@ public class AppInfoController {
     private DataDictionaryService dataDictionaryService;
 
     /**
+     * 删除图片
+     * @param id
+     * @param flag
+     * @return
+     */
+    @GetMapping("delfile")
+    @ResponseBody
+    public JsonResult delfile(Long id ,String flag){
+        if(flag.equals("logo")){
+        AppInfo appInfo = appInfoService.queryById(id);
+        try {
+            File file=new File(appInfo.getLogolocpath());
+            file.delete();//删除文件
+            appInfo.setLogopicpath("");
+            appInfo.setLogolocpath("");
+            appInfoService.update(appInfo);
+            return new JsonResult(true);
+        } catch (Exception e) {
+            return new JsonResult(false);
+         }
+        }
+        return new JsonResult(false);
+    }
+    /**
+     * 修改查询
+     * @param id
+     * @return
+     */
+    @GetMapping("appinfomodify/{id}")
+    public String appinfomodify(Model model,@PathVariable Long id){
+        model.addAttribute("appInfo",appInfoService.queryById(id));
+        return "developer/appinfomodify";
+    }
+
+    /**
      *  验证apk是否注册
      * @param apkname
      * @return
@@ -43,6 +78,32 @@ public class AppInfoController {
     }
 
     /**
+     * App修改
+     * @return
+     */
+    @PostMapping("/appinfomodify")
+    public String appinfomodify(HttpSession session, AppInfo appinfo, MultipartFile attach){
+        System.out.println("attach = " + attach.isEmpty());
+        if (!attach.isEmpty()){
+            //1.实现文件夹上传
+            String server_path=session.getServletContext().getRealPath("/statics/uploadfiles/");
+            appinfo.setLogopicpath("/statics/uploadfiles/"+attach.getOriginalFilename());//相对路径
+            appinfo.setLogolocpath(server_path+""+attach.getOriginalFilename());
+            try {
+                attach.transferTo(new File(server_path,attach.getOriginalFilename()));
+            } catch (IOException e) {
+            }
+        }
+        //2.app修改
+        DevUser devuser =(DevUser) session.getAttribute("devuser");
+        appinfo.setUpdatedate(new Date());
+        appinfo.setDevid(devuser.getId());
+        appinfo.setModifyby(devuser.getId());
+        appinfo.setModifydate(new Date());
+        appInfoService.update(appinfo);
+        return "redirect:/dev/app/list";
+    }
+    /**
      * App新增
      * @return
      */
@@ -57,14 +118,12 @@ public class AppInfoController {
         }
         //2.app添加
         DevUser devuser =(DevUser) session.getAttribute("devuser");
-        appinfo.setUpdatedate(new Date());
         appinfo.setDevid(devuser.getId());
         appinfo.setCreatedby(devuser.getId());
         appinfo.setCreationdate(new Date());
-        appinfo.setLogolocpath("/statics/uploadfiles/"+a_logoPicPath.getOriginalFilename());//相对路径
-        appinfo.setLogolocpath(server_path+"/"+a_logoPicPath.getOriginalFilename());
+        appinfo.setLogopicpath("/statics/uploadfiles/"+a_logoPicPath.getOriginalFilename());//相对路径
+        appinfo.setLogolocpath(server_path+""+a_logoPicPath.getOriginalFilename());
         appInfoService.save(appinfo);
-
         return "redirect:/dev/app/list";
     }
 

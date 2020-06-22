@@ -7,7 +7,6 @@ import com.jbit.mapper.AppInfoMapper;
 import com.jbit.pojo.AppInfo;
 import com.jbit.pojo.AppVersion;
 
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.Appinfo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
@@ -96,5 +95,15 @@ public class AppinfoService {
     @Transactional
     public void save(AppInfo appInfo) {
         appInfoMapper.insertSelective(appInfo);
+    }
+
+    public AppInfo queryById(Long id) {
+        AppInfo appInfo = appInfoMapper.selectByPrimaryKey(id);
+        appInfo.setStatusname(dataDictionaryService.queryData("APP_STATUS",appInfo.getStatus()).getValuename());
+        return appInfo;
+    }
+
+    public void update(AppInfo appInfo) {
+        appInfoMapper.updateByPrimaryKeySelective(appInfo);
     }
 }
